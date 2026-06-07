@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Subhankar Sahoo | AI & ML Engineer",
   description: "B.Tech CSE student specializing in Artificial Intelligence and Machine Learning. Building the next generation of web and hardware experiences.",
   openGraph: {
