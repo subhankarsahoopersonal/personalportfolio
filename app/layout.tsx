@@ -13,10 +13,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Subhankar Sahoo | AI & ML Engineer",
+  title: "Subhankar Sahoo | AI & ML Engineering Student",
   description: "B.Tech CSE student specializing in Artificial Intelligence and Machine Learning. Building the next generation of web and hardware experiences.",
   openGraph: {
-    title: "Subhankar Sahoo | AI & ML Engineer",
+    title: "Subhankar Sahoo | AI & ML Engineering Student",
     description: "Crafting the next generation of AI & ML web experiences.",
     url: "https://subhankarsahoo.qzz.io",
     siteName: "Subhankar Sahoo Portfolio",
