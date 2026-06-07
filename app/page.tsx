@@ -6,19 +6,32 @@ export default function ComingSoon() {
   const [bootStep, setBootStep] = useState(0);
   const [isBooting, setIsBooting] = useState(false);
 
-  // === NEW: SPOTLIGHT STATE ===
+  // === EXISTING: SPOTLIGHT STATE ===
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  // === NEW: TRACK CURSOR GLOBALLY ===
+  // === NEW: TELEMETRY STATE ===
+  const [telemetry, setTelemetry] = useState({ cpu: 42, ram: 12.4, ping: 12 });
+
+  // Track Cursor Globally
   useEffect(() => {
     const updateMousePosition = (ev: MouseEvent) => {
       setMousePosition({ x: ev.clientX, y: ev.clientY });
     };
-
     window.addEventListener("mousemove", updateMousePosition);
-    return () => {
-      window.removeEventListener("mousemove", updateMousePosition);
-    };
+    return () => window.removeEventListener("mousemove", updateMousePosition);
+  }, []);
+
+  // === NEW: LIVE TELEMETRY FLUCTUATION ===
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTelemetry({
+        cpu: Math.floor(Math.random() * (85 - 12 + 1)) + 12, // Random 12% to 85%
+        ram: +(Math.random() * (14.2 - 11.5) + 11.5).toFixed(1), // Random 11.5 to 14.2 GB
+        ping: Math.floor(Math.random() * (28 - 8 + 1)) + 8, // Random 8ms to 28ms
+      });
+    }, 1500); // Updates every 1.5 seconds
+
+    return () => clearInterval(interval);
   }, []);
 
   // Boot Sequence Logic
@@ -43,15 +56,30 @@ export default function ComingSoon() {
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-slate-950 text-white selection:bg-cyan-500/30 font-sans p-6 md:p-12">
 
-      {/* === NEW: THE INTERACTIVE SPOTLIGHT === */}
-      {/* This invisible div sits over the entire screen and moves a subtle glow with the cursor */}
+      {/* Interactive Cursor Spotlight */}
       <div
         className="pointer-events-none fixed inset-0 z-30 transition-opacity duration-300"
         style={{
           background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(34,211,238,0.08), transparent 40%)`
         }}
       />
-      {/* ======================================= */}
+
+      {/* === NEW: LIVE SYSTEM TELEMETRY WIDGET === */}
+      <div className="fixed top-6 right-6 z-50 flex flex-col gap-1.5 p-4 rounded-xl bg-slate-950/40 backdrop-blur-md border border-slate-800 shadow-[0_0_15px_rgba(6,182,212,0.1)] font-mono text-xs text-cyan-400 hidden sm:flex transition-all hover:bg-slate-900/60 hover:border-cyan-500/30">
+        <div className="flex items-center justify-between gap-6">
+          <span className="text-slate-400">SYS.CPU</span>
+          <span className="w-8 text-right">{telemetry.cpu}%</span>
+        </div>
+        <div className="flex items-center justify-between gap-6">
+          <span className="text-slate-400">MEM.ALLOC</span>
+          <span className="w-16 text-right">{telemetry.ram}GB</span>
+        </div>
+        <div className="flex items-center justify-between gap-6">
+          <span className="text-slate-400">NET.PING</span>
+          <span className="w-10 text-right">{telemetry.ping}ms</span>
+        </div>
+      </div>
+      {/* ========================================= */}
 
       {/* Vibrant Ambient Gradient Orbs */}
       <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
@@ -70,7 +98,7 @@ export default function ComingSoon() {
         <div className="flex flex-col items-center lg:items-start text-center lg:text-left w-full lg:w-1/2">
 
           {/* Network Status Badge */}
-          <div className="inline-flex items-center rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-1.5 text-sm font-medium text-cyan-300 backdrop-blur-md mb-8 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+          <div className="inline-flex items-center rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-1.5 text-sm font-medium text-cyan-300 backdrop-blur-md mb-8 shadow-[0_0_15px_rgba(6,182,212,0.15)] relative z-40">
             <span className="relative flex h-2 w-2 mr-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
@@ -131,7 +159,7 @@ export default function ComingSoon() {
           </div>
           {/* =========================================== */}
 
-          {/* Terminal Box (Only shows when booting) */}
+          {/* Terminal Box */}
           {isBooting && (
             <div className="w-full max-w-lg text-left mt-4 animate-in fade-in slide-in-from-bottom-4 duration-500 relative z-40">
               <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-t border-x border-slate-700 rounded-t-lg">
@@ -178,7 +206,7 @@ export default function ComingSoon() {
 
         {/* === RIGHT COLUMN: COMPLETE PHOTO === */}
         <div className="w-full lg:w-1/2 flex justify-center lg:justify-end relative z-40">
-          <div className="relative w-full max-w-sm aspect-[3/4] rounded-2xl border border-slate-700 overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.15)] group">
+          <div className="relative w-full max-w-sm aspect-[3/4] rounded-2xl border border-slate-700 overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.15)] group hover:border-cyan-500/50 transition-colors duration-500">
 
             {/* Subtle inner glow behind the image */}
             <div className="absolute inset-0 z-0 bg-gradient-to-tr from-cyan-500/20 to-violet-500/20 opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -191,8 +219,8 @@ export default function ComingSoon() {
             />
 
             {/* Futuristic overlay lines on the image corners */}
-            <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-cyan-400 z-30 m-4 opacity-50"></div>
-            <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-cyan-400 z-30 m-4 opacity-50"></div>
+            <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-cyan-400 z-30 m-4 opacity-50 transition-all duration-500 group-hover:w-12 group-hover:h-12 group-hover:opacity-100"></div>
+            <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-cyan-400 z-30 m-4 opacity-50 transition-all duration-500 group-hover:w-12 group-hover:h-12 group-hover:opacity-100"></div>
           </div>
         </div>
 
